@@ -1,259 +1,372 @@
-import { useState, useEffect, useRef } from "react"
-import { Menu, X, ArrowDown, Phone, Mail, MapPin } from "lucide-react"
-import { useForm } from '@formspree/react'
+import { useState, useEffect } from "react";
+import { useForm } from "@formspree/react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  ArrowRight,
+  Target,
+  Users,
+  Shield,
+  Layers,
+  Menu,
+  X,
+} from "lucide-react";
 
-export default function App() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+const publicBase = import.meta.env.BASE_URL;
+const assetPath = (path: string) => encodeURI(`${publicBase}${path}`);
 
-  const [formState, handleSubmit] = useForm("mzdkvaqg")
+const navItems = [
+  { label: "O nás", id: "about" },
+  { label: "Služby", id: "services" },
+  { label: "Naše práce", id: "portfolio" },
+  { label: "Tým", id: "team" },
+  { label: "Kariéra", id: "career" },
+  { label: "Kontakt", id: "contact" },
+];
 
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
-  const aboutRef = useRef<HTMLElement>(null)
-  const teamRef = useRef<HTMLElement>(null)
-  const careerRef = useRef<HTMLElement>(null)
+const teamMembers = [
+  { name: "Marie", role: "head of Match", img: assetPath("Head images/Marie.png"), initials: "M" },
+  { name: "Marek", role: "kreativní stratég", img: assetPath("Head images/Marek.jpg"), initials: "MK" },
+  { name: "Kuba", role: "content creator", img: assetPath("Head images/Kuba-content.jpg"), initials: "K" },
+  { name: "Kuba", role: "senior videomaker", img: assetPath("Head images/Kuba-video.png"), initials: "KV" },
+  { name: "David", role: "PPC specialista", img: assetPath("Head images/David.png"), initials: "D" },
+];
+
+export default function MatchPage() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [formState, handleSubmit] = useForm("mzdkvaqg");
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set(prev).add(entry.target.id))
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
-
-    const refs = [aboutRef, teamRef, careerRef]
-    refs.forEach((ref) => {
-      if (ref.current) observer.observe(ref.current)
-    })
-
-    return () => observer.disconnect()
-  }, [])
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id)
+    const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      element.scrollIntoView({ behavior: "smooth" });
     }
-    setMobileMenuOpen(false)
-  }
-
-  const navLinks = [
-    { label: "O nás", id: "about" },
-    { label: "Tým", id: "team" },
-    { label: "Kariéra", id: "career" },
-    { label: "Kontakt", id: "footer" },
-  ]
-
-  const services = [
-    { title: "Public affairs a politický marketing", description: "Strategická komunikace s veřejným sektorem a stakeholdery" },
-    { title: "PR a social", description: "Media relations, krizová komunikace a správa sítí" },
-    { title: "Reputation management", description: "Budování a ochrana reputace značek" },
-    { title: "Integrovaný marketing", description: "Komplexní a promyšlená řešení" },
-  ]
-
-  const team = [
-    { name: "Marie", role: "head of Match", img: "Head images/Marie.png", initials: "MA" },
-    { name: "Marek", role: "kreativní stratég a grafik", img: "Head images/Marek.jpg", initials: "MK" },
-    { name: "Kuba", role: "content creator", img: "Head images/Kuba-content.jpg", initials: "KU" },
-    { name: "Kuba", role: "seniorní videomaker", img: "Head images/Kuba-video.png", initials: "KU" },
-    { name: "David", role: "PPC specialista", img: "Head images/David.png", initials: "DA" },
-  ]
+    setIsMobileMenuOpen(false);
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 font-['Inter',sans-serif]">
-      {/* Navigation */}
+    <div className="min-h-screen bg-white text-neutral-900">
+      {/* Header */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled ? "bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm py-2" : "bg-transparent py-4"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-white shadow-sm" : "bg-transparent"
         }`}
       >
-        <nav className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <button
-              onClick={() => scrollToSection("hero")}
-              className={`font-['Playfair_Display',serif] text-3xl font-black tracking-widest hover:opacity-70 transition-opacity ${isScrolled ? 'text-black' : 'text-white'}`}
-            >
-              MATCH
-            </button>
+        <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full border border-neutral-900 flex items-center justify-center">
+              <span className="font-serif text-lg">M</span>
+            </div>
+            <div className="flex flex-col">
+              <div className="font-serif font-bold tracking-[0.3em] text-base leading-tight">
+                MATCH
+              </div>
+              <div className="text-[8px] tracking-[0.15em] text-neutral-400 uppercase leading-tight">
+                VAŠE SPOJENÍ S ÚSPĚCHEM
+              </div>
+            </div>
+          </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-12">
-              {navLinks.map((link) => (
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-10">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="relative text-sm text-neutral-600 hover:text-neutral-900 transition-colors group py-1"
+              >
+                {item.label}
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-neutral-900 transition-all duration-300 group-hover:w-full" />
+              </button>
+            ))}
+          </nav>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-neutral-100">
+            <nav className="flex flex-col px-6 py-4">
+              {navItems.map((item) => (
                 <button
-                  key={link.id}
-                  onClick={() => scrollToSection(link.id)}
-                  className={`text-sm font-medium tracking-widest uppercase transition-colors relative group ${isScrolled ? 'text-zinc-600 hover:text-black' : 'text-zinc-300 hover:text-white'}`}
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="text-left py-3 text-neutral-600 hover:text-neutral-900 transition-colors border-b border-neutral-100 last:border-0"
                 >
-                  {link.label}
-                  <span className={`absolute -bottom-2 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full ${isScrolled ? 'bg-black' : 'bg-white'}`} />
+                  {item.label}
                 </button>
               ))}
-            </div>
+            </nav>
+          </div>
+        )}
+      </header>
 
-            {/* Mobile Menu Button */}
+      {/* Hero Section */}
+      <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+        {/* Background Circle */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+          <div className="w-[650px] h-[650px] rounded-full border border-neutral-200 flex items-center justify-center relative">
+            <span className="font-serif text-[450px] text-neutral-900 opacity-[0.05] select-none leading-none">
+              M
+            </span>
+          </div>
+        </div>
+
+        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+          <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-8">
+            Marketingová Agentura
+          </p>
+          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] mb-8">
+            Vaše spojení
+            <br />
+            <span className="text-neutral-400">s úspěchem</span>
+          </h1>
+          <p className="text-neutral-500 max-w-xl mx-auto mb-12 leading-relaxed">
+            Pomáháme značkám a organizacím komunikovat přesně, strategicky a s
+            maximálním dopadem.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`md:hidden p-2 rounded transition-colors ${isScrolled ? 'hover:bg-zinc-100 text-black' : 'hover:bg-white/10 text-white'}`}
-              aria-label="Toggle menu"
+              onClick={() => scrollToSection("services")}
+              className="bg-neutral-900 text-white px-8 py-4 text-sm tracking-wider hover:bg-neutral-800 transition-colors"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              NAŠE SLUŽBY
+            </button>
+            <button
+              onClick={() => scrollToSection("contact")}
+              className="border border-neutral-900 text-neutral-900 px-8 py-4 text-sm tracking-wider hover:bg-neutral-50 transition-colors"
+            >
+              KONTAKTUJTE NÁS
             </button>
           </div>
-        </nav>
+        </div>
 
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden fixed inset-0 top-[88px] bg-white z-40 transition-all duration-500 ${
-            mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          }`}
-        >
-          <div className="flex flex-col items-center justify-center h-[calc(100vh-88px)] gap-10 bg-white">
-            {navLinks.map((link, index) => (
-              <button
-                key={link.id}
-                onClick={() => scrollToSection(link.id)}
-                className="text-4xl font-['Playfair_Display',serif] text-black tracking-wide hover:opacity-70 transition-all"
-                style={{
-                  transitionDelay: mobileMenuOpen ? `${index * 100}ms` : "0ms",
-                  transform: mobileMenuOpen ? "translateY(0)" : "translateY(20px)",
-                  opacity: mobileMenuOpen ? 1 : 0,
-                }}
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+          <div className="w-6 h-10 border border-neutral-300 rounded-full flex items-start justify-center p-2">
+            <div className="w-1 h-2 bg-neutral-400 rounded-full animate-bounce" />
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-24 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
+            <div>
+              <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+                O Nás
+              </p>
+              <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-8">
+                Jsme MATCH
+              </h2>
+              <p className="text-neutral-500 leading-relaxed mb-6">
+                V dnešním informačně přesyceném světě je klíčové rozeznat, co je
+                skutečně podstatné. Pomáháme našim klientům soustředit se na to
+                nejdůležitější.
+              </p>
+              <p className="text-neutral-500 leading-relaxed">
+                Věříme, že díky naší expertize mohou své kroky i sdělení správně
+                načasovat a přesně zacílit. Poskytujeme promyšlená, komplexní
+                řešení v několika specializovaných odvětvích.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              {[
+                { number: "15+", label: "Let zkušeností" },
+                { number: "200+", label: "Úspěšných projektů" },
+                { number: "50+", label: "Spokojených klientů" },
+                { number: "100%", label: "Nasazení" },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <div className="font-serif text-4xl md:text-5xl lg:text-6xl mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-neutral-500 text-sm">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-24 md:py-32 px-6 bg-neutral-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+              Naše Služby
+            </p>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-6">
+              Naše specializace
+            </h2>
+            <p className="text-neutral-500 max-w-2xl mx-auto leading-relaxed">
+              Orientovat se v dnešním informačně složitém světě není snadné.
+              Všem našim klientům pomáháme rozeznat, co je skutečně podstatné.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                icon: Target,
+                title: "Public affairs a politický marketing",
+                description:
+                  "Strategické poradenství a komunikace s veřejnými institucemi, politickými aktéry a regulačními orgány.",
+              },
+              {
+                icon: Users,
+                title: "PR a social",
+                description:
+                  "Komplexní řízení vztahů s médii, tvorba obsahu a správa sociálních sítí pro maximální dosah vaší značky.",
+              },
+              {
+                icon: Shield,
+                title: "Reputation management",
+                description:
+                  "Ochrana a budování dobré pověsti vaší značky, krizová komunikace a monitoring mediálního prostoru.",
+              },
+              {
+                icon: Layers,
+                title: "Integrovaný marketing",
+                description:
+                  "Propojení všech marketingových kanálů do jednotné strategie pro konzistentní a efektivní komunikaci.",
+              },
+            ].map((service) => (
+              <div
+                key={service.title}
+                className="bg-white p-8 md:p-10 border border-neutral-100 hover:border-neutral-200 transition-colors"
               >
-                {link.label}
-              </button>
+                <service.icon
+                  className="w-10 h-10 text-neutral-400 mb-6"
+                  strokeWidth={1}
+                />
+                <h3 className="font-serif text-xl md:text-2xl mb-4">
+                  {service.title}
+                </h3>
+                <p className="text-neutral-500 leading-relaxed">
+                  {service.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
-      </header>
-
-      {/* Hero Section - Dark premium look */}
-      <section
-        id="hero"
-        className="min-h-screen flex flex-col items-center justify-center relative px-6 lg:px-8 bg-zinc-950 overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/30 via-zinc-950 to-zinc-950"></div>
-        
-        <div className="text-center max-w-5xl mx-auto relative z-10">
-          <h1 className="font-['Playfair_Display',serif] text-7xl sm:text-8xl md:text-9xl font-black tracking-tight text-white mb-8 animate-[fadeIn_1s_ease-out_0.2s_both]">
-            MATCH
-          </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-zinc-400 font-light tracking-widest max-w-2xl mx-auto leading-relaxed animate-[fadeIn_1s_ease-out_0.5s_both]">
-            VAŠE SPOJENÍ S ÚSPĚCHEM
-          </p>
-        </div>
-
-        <button
-          onClick={() => scrollToSection("about")}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce p-4"
-          aria-label="Scroll down"
-        >
-          <ArrowDown className="w-8 h-8 text-zinc-500" />
-        </button>
       </section>
 
-      {/* About & Services Section */}
-      <section
-        id="about"
-        ref={aboutRef}
-        className={`py-32 px-6 lg:px-8 bg-white transition-all duration-1000 ${
-          visibleSections.has("about") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 lg:gap-32">
+      {/* Portfolio Section */}
+      <section id="portfolio" className="py-24 md:py-32 bg-neutral-900 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16 mb-16">
             <div>
-              <h2 className="font-['Playfair_Display',serif] text-5xl md:text-6xl mb-10 text-zinc-900 leading-tight">
-                O nás
+              <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+                Portfolio
+              </p>
+              <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">
+                Naše práce
               </h2>
-              <div className="space-y-8 text-zinc-600 text-xl font-light leading-relaxed">
-                <p>
-                  Orientovat se v dnešním informačně složitém světě není snadné. Všem našim klientům pomáháme rozeznat, co je skutečně podstatné, aby se mohli lépe soustředit na dosažení svých cílů.
-                </p>
-                <p>
-                  Věříme, že díky naší expertize mohou své kroky i sdělení správně načasovat a přesně zacílit. Poskytujeme promyšlená, komplexní řešení v několika specializovaných odvětvích.
-                </p>
-              </div>
             </div>
+            <div className="flex items-end">
+              <p className="text-neutral-400 leading-relaxed">
+                Naši práci děláme rádi a jsme hrdí na to, co jsme pro naše
+                klienty dokázali.
+              </p>
+            </div>
+          </div>
 
-            <div className="bg-zinc-50 p-10 rounded-3xl">
-              <h3 className="text-sm font-bold tracking-widest uppercase text-zinc-400 mb-10">
-                Naše specializace
-              </h3>
-              <div className="space-y-0">
-                {services.map((service, index) => (
-                  <div
-                    key={index}
-                    className="group border-b border-zinc-200 last:border-0 py-6 cursor-pointer transition-all duration-300 hover:px-4 hover:bg-white hover:shadow-sm rounded-xl -mx-4 px-4"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h4 className="text-xl font-medium mb-1 text-zinc-900 group-hover:text-black transition-colors">
-                          {service.title}
-                        </h4>
-                        <p className="text-zinc-500 text-sm opacity-80 group-hover:opacity-100 transition-opacity">
-                          {service.description}
-                        </p>
-                      </div>
-                      <span className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-2 transition-all">
-                        →
-                      </span>
-                    </div>
-                  </div>
-                ))}
+          <div className="divide-y divide-neutral-800">
+            {[
+              {
+                year: "2024",
+                title: "Strategická kampaň",
+                category: "PUBLIC AFFAIRS",
+              },
+              {
+                year: "2024",
+                title: "Brand Repositioning",
+                category: "INTEGROVANÝ MARKETING",
+              },
+              {
+                year: "2023",
+                title: "Krizová komunikace",
+                category: "REPUTATION MANAGEMENT",
+              },
+            ].map((project, index) => (
+              <div
+                key={index}
+                className="py-8 md:py-10 flex items-center justify-between group cursor-pointer hover:opacity-70 transition-opacity"
+              >
+                <div className="flex items-center gap-6 md:gap-16">
+                  <span className="text-neutral-500 text-sm">{project.year}</span>
+                  <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl">
+                    {project.title}
+                  </h3>
+                  <span className="hidden md:block text-xs tracking-[0.2em] text-neutral-500">
+                    {project.category}
+                  </span>
+                </div>
+                <ArrowRight className="w-6 h-6 text-neutral-500 group-hover:translate-x-2 transition-transform" />
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Team Section */}
-      <section
-        id="team"
-        ref={teamRef}
-        className={`py-32 px-6 lg:px-8 bg-zinc-950 text-white transition-all duration-1000 ${
-          visibleSections.has("team") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-        }`}
-      >
+      <section id="team" className="py-24 md:py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="font-['Playfair_Display',serif] text-5xl md:text-6xl mb-8">Náš tým</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto text-xl font-light">
-              Naši práci děláme rádi a jsme hrdí na to, co jsme pro naše klienty dokázali.
+          <div className="text-center mb-16">
+            <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+              Náš Tým
+            </p>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-6">
+              Seznamte se s námi
+            </h2>
+            <p className="text-neutral-500 max-w-2xl mx-auto leading-relaxed">
+              Za každým úspěšným projektem stojí skvělý tým. Poznejte lidi,
+              kteří vaše vize přeměňují ve skutečnost.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 lg:gap-12">
-            {team.map((member, index) => (
-              <div key={index} className="group text-center">
-                <div className="relative w-40 h-40 mx-auto mb-8 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-all duration-500 shadow-2xl ring-4 ring-zinc-900/50 group-hover:ring-zinc-700">
-                 <img 
-                  src={member.img} 
-                  alt={member.name} 
-                  // Fallback, if image fails to load, show initials
-                 className="w-full h-full object-cover object-center scale-[1.2] opacity-90 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.3]"
-                  onError={(e) => {
-                 (e.target as HTMLImageElement).style.display = 'none';
-                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-                  <span className="hidden absolute inset-0 flex items-center justify-center text-4xl font-['Playfair_Display',serif] text-zinc-500">
+          <div className="flex flex-wrap justify-center gap-12 md:gap-16">
+            {teamMembers.map((member, index) => (
+              <div key={index} className="text-center group">
+                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 mx-auto relative bg-neutral-200 flex items-center justify-center group-hover:bg-neutral-300 transition-colors duration-500">
+                  <img
+                    src={member.img}
+                    alt={member.name}
+                    className="w-full h-full object-cover object-center scale-[1.2] grayscale group-hover:grayscale-0 transition-all duration-500 z-10 relative"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                  {/* Fallback to initials if image fails to load */}
+                  <span className="absolute inset-0 flex items-center justify-center font-serif text-4xl md:text-5xl text-neutral-500 group-hover:text-neutral-700 transition-colors duration-500 z-0">
                     {member.initials}
                   </span>
                 </div>
-                <h3 className="font-medium text-2xl mb-2">{member.name}</h3>
-                <p className="text-sm text-zinc-400 uppercase tracking-wider">{member.role}</p>
+                <h3 className="font-serif text-xl md:text-2xl mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-neutral-500 text-sm">{member.role}</p>
               </div>
             ))}
           </div>
@@ -261,85 +374,181 @@ export default function App() {
       </section>
 
       {/* Career Section */}
-      <section
-        id="career"
-        ref={careerRef}
-        className={`py-32 px-6 lg:px-8 bg-white transition-all duration-1000 ${
-          visibleSections.has("career") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-        }`}
-      >
+      <section id="career" className="py-24 md:py-32 px-6 bg-neutral-50/50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 lg:gap-32">
+          <div className="text-center mb-12">
+            <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+              Kariéra
+            </p>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">
+              Staňte se součástí týmu
+            </h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-neutral-100 p-8 md:p-12">
+              <h3 className="font-serif text-2xl md:text-3xl mb-6">
+                Head of Social Media & Content
+              </h3>
+              <p className="text-neutral-500 leading-relaxed mb-4">
+                Rádi byste se podíleli na tvorbě kvalitního a poutavého
+                multimediálního obsahu pro online prostředí a chcete být u jeho
+                přípravy od prvotního nápadu až po finální detaily?
+              </p>
+              <p className="text-neutral-500 leading-relaxed mb-4">
+                Máte za sebou několik let zkušeností s řízením online brandových
+                kampaní, víte, jak spolupracovat s influencery, a nové digitální
+                trendy máte v malíku?
+              </p>
+              <p className="text-neutral-500 leading-relaxed mb-8">
+                Jako head of social media & content svůj talent a nápady
+                uplatníte v rozmanitých kampaních pro firmy i úspěšné značky.
+              </p>
+              <button
+                onClick={() => scrollToSection("contact")}
+                className="bg-neutral-900 text-white px-8 py-4 text-sm tracking-wider hover:bg-neutral-800 transition-colors"
+              >
+                MÁM ZÁJEM
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-24 md:py-32 px-6 bg-neutral-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 md:gap-24">
             <div>
-              <h2 className="font-['Playfair_Display',serif] text-5xl md:text-6xl mb-10 text-zinc-900">
-                Kariéra
+              <p className="text-xs tracking-[0.3em] text-neutral-500 uppercase mb-4">
+                Kontakt
+              </p>
+              <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-8">
+                Spojme se
               </h2>
-              <div className="bg-zinc-50 border border-zinc-100 p-10 rounded-3xl">
-                <h3 className="text-2xl font-bold mb-6 text-black">Head of social media & content</h3>
-                <div className="space-y-6 text-zinc-600 font-light text-lg">
-                  <p>
-                    Rádi byste se podíleli na tvorbě kvalitního a poutavého multimediálního obsahu pro online prostředí a chcete být u jeho přípravy od prvotního nápadu až po finální detaily?
-                  </p>
-                  <p>
-                    Máte za sebou několik let zkušeností s řízením online brandových kampaní, víte, jak spolupracovat s influencery, a nové digitální trendy máte v malíku?
-                  </p>
-                  <p className="font-medium text-black">
-                    Staňte se členem našeho týmu. Svůj talent uplatníte v rozmanitých kampaních pro firmy i úspěšné značky. Pošlete nám svoje CV.
-                  </p>
-                </div>
+              <p className="text-neutral-500 leading-relaxed mb-12">
+                Máte projekt, který potřebuje správnou strategii? Ozvěte se nám
+                a společně najdeme to nejlepší řešení.
+              </p>
+
+              <div className="space-y-6">
+                {[
+                  { icon: Phone, text: "+420 774 966 336", href: "tel:+420774966336" },
+                  {
+                    icon: Mail,
+                    text: "matchcom.sro@gmail.com",
+                    href: "mailto:matchcom.sro@gmail.com",
+                  },
+                  {
+                    icon: MapPin,
+                    text: "Praha, Česká republika",
+                    href: null,
+                  },
+                ].map((contact, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    <div className="w-12 h-12 border border-neutral-200 flex items-center justify-center">
+                      <contact.icon className="w-5 h-5 text-neutral-500" />
+                    </div>
+                    {contact.href ? (
+                      <a
+                        href={contact.href}
+                        className="text-neutral-700 hover:text-neutral-900 transition-colors"
+                      >
+                        {contact.text}
+                      </a>
+                    ) : (
+                      <span className="text-neutral-700">{contact.text}</span>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Application Form */}
-            <div className="bg-white p-10 lg:p-12 border border-zinc-200 rounded-3xl shadow-xl shadow-zinc-200/50">
-              <h3 className="font-['Playfair_Display',serif] text-4xl mb-10">Mám zájem</h3>
-
+            <div>
               {formState.succeeded ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-emerald-50 flex items-center justify-center">
-                    <svg className="w-10 h-10 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="text-2xl font-bold mb-3 text-black">Děkujeme za váš zájem!</p>
-                  <p className="text-zinc-500 text-lg">Vaše údaje jsme v pořádku přijali a brzy se vám ozveme.</p>
+                <div className="bg-white p-8 border border-neutral-200 text-center">
+                  <h3 className="font-serif text-2xl mb-4">Děkujeme!</h3>
+                  <p className="text-neutral-500">
+                    Vaši zprávu jsme obdrželi a brzy se vám ozveme.
+                  </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm text-neutral-600 mb-2"
+                      >
+                        Jméno
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Vaše jméno"
+                        className="w-full px-4 py-3 border border-neutral-200 bg-white focus:outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-400"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm text-neutral-600 mb-2"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="vas@email.cz"
+                        className="w-full px-4 py-3 border border-neutral-200 bg-white focus:outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-400"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label htmlFor="email" className="block text-sm font-bold text-zinc-900 mb-3 uppercase tracking-wider">
-                      E-mail
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm text-neutral-600 mb-2"
+                    >
+                      Předmět
                     </label>
                     <input
-                      type="email"
-                      name="email"
-                      id="email"
+                      type="text"
+                      id="subject"
+                      name="subject"
                       required
-                      className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl focus:border-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
-                      placeholder="vas@email.cz"
+                      placeholder="O čem byste rádi mluvili?"
+                      className="w-full px-4 py-3 border border-neutral-200 bg-white focus:outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-400"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-bold text-zinc-900 mb-3 uppercase tracking-wider">
-                      Zpráva / Odkaz na CV
+                    <label
+                      htmlFor="message"
+                      className="block text-sm text-neutral-600 mb-2"
+                    >
+                      Zpráva
                     </label>
                     <textarea
                       id="message"
                       name="message"
                       required
                       rows={5}
-                      className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl focus:border-black focus:ring-1 focus:ring-black focus:outline-none transition-all resize-none"
-                      placeholder="Napište nám o sobě nebo vložte odkaz na LinkedIn..."
+                      placeholder="Vaše zpráva..."
+                      className="w-full px-4 py-3 border border-neutral-200 bg-white focus:outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-400"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={formState.submitting}
-                    className="w-full py-5 bg-black text-white text-lg font-bold tracking-widest uppercase rounded-xl hover:bg-zinc-800 transition-colors disabled:opacity-50 shadow-lg shadow-black/20"
+                    className="w-full bg-neutral-900 text-white py-4 text-sm tracking-wider hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Odeslat
+                    {formState.submitting ? "ODESÍLÁNÍ..." : "ODESLAT ZPRÁVU"}
                   </button>
                 </form>
               )}
@@ -349,71 +558,25 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer id="footer" className="bg-zinc-950 text-white pt-24 pb-12 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-12 mb-20">
-            <div>
-              <h2 className="font-['Playfair_Display',serif] text-4xl font-bold mb-8">MATCH</h2>
-              <p className="text-zinc-400 leading-relaxed text-lg font-light">
-                PR & Marketing agentura
-                <br />
-                Vaše spojení s úspěchem
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-bold tracking-widest uppercase text-zinc-500 mb-8">Kontakt</h3>
-              <ul className="space-y-6">
-                <li>
-                  <a href="tel:+420774966336" className="flex items-center gap-4 text-zinc-300 hover:text-white transition-colors group">
-                    <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-zinc-800 transition-colors">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    +420 774 966 336
-                  </a>
-                </li>
-                <li>
-                  <a href="mailto:matchcom.sro@gmail.com" className="flex items-center gap-4 text-zinc-300 hover:text-white transition-colors group">
-                    <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-zinc-800 transition-colors">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    matchcom.sro@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <div className="flex items-start gap-4 text-zinc-300">
-                    <div className="p-2 rounded-full bg-zinc-900 mt-1">
-                      <MapPin className="w-4 h-4 shrink-0" />
-                    </div>
-                    <span className="leading-relaxed">
-                      Nad schody 73
-                      <br />
-                      Praha - západ, 252 05
-                    </span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-bold tracking-widest uppercase text-zinc-500 mb-8">
-                Fakturační údaje
-              </h3>
-              <ul className="space-y-4 text-zinc-300 font-light">
-                <li className="font-medium text-white text-lg">Match s. r. o.</li>
-                <li>IČO: 13972618</li>
-                <li>Datová schránka: y59snmt</li>
-              </ul>
-            </div>
+      <footer className="py-8 px-6 border-t border-neutral-200">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="w-10 h-10 rounded-full border border-neutral-900 flex items-center justify-center flex-shrink-0">
+            <span className="font-serif text-lg">M</span>
           </div>
-
-          <div className="pt-8 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-zinc-600">
-              &copy; {new Date().getFullYear()} MATCH s.r.o. Všechna práva vyhrazena.
-            </p>
+          
+          <div className="flex items-center gap-3 text-sm text-neutral-500">
+            <span>Match s.r.o.</span>
+            <span className="text-neutral-300">•</span>
+            <span>+420 774 966 336</span>
+            <span className="text-neutral-300">•</span>
+            <span>matchcom.sro@gmail.com</span>
           </div>
+          
+          <p className="text-sm text-neutral-500">
+            © 2026 MATCH
+          </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }

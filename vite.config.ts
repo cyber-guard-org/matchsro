@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/matchsro/',
+  base: '/matchsro.github.io/',
   plugins: [
     react(),
     tailwindcss(),
